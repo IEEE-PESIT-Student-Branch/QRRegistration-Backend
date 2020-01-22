@@ -1,8 +1,8 @@
 function handleFileSelect(evt) {
   var files = evt.target.files; // FileList object
-  var id = 202000000001;
 
   // Loop through the FileList and render image files as thumbnails.
+  data = [];
   for (var i = 0, f; (f = files[i]); i++) {
     var reader = new FileReader();
     reader.onload = function(event) {
@@ -14,13 +14,12 @@ function handleFileSelect(evt) {
         var cols = line.split(",");
         var obj = {
           id: cols[0],
-          name: cols[1],
-          class: ""+cols[2].trim()
+          name: cols[1]
         };
         data.push(obj);
       });
       console.log(data);
-      $.post("/csv", { info: data }, function(d) {
+      $.post("/registration/", { info: data, count : count}, function(d) {
         console.log(d);
       });
     };
@@ -29,7 +28,6 @@ function handleFileSelect(evt) {
   }
 }
 evt = null;
-data = [];
 obj = {};
 
 document.getElementById("files").addEventListener(
@@ -40,6 +38,9 @@ document.getElementById("files").addEventListener(
   false
 );
 
+var count = 1;
+
 $("#submit").click(function() {
+  count = document.getElementById("count").valueAsNumber;
   handleFileSelect(evt);
 });
