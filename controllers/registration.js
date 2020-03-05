@@ -32,11 +32,35 @@ exports.insertAllData = (req, res, next) => {
 };
 
 exports.getParticipants = async (req, res, next) => {
-  console.log("Getting List...");
   try {
     const participants = await Participant.find();
-    res.status(200).json({success: true, data: participants});
+    res.status(200).json({ success: true, data: participants });
   } catch (err) {
     res.status(400).json({ success: false });
+  }
+};
+
+exports.clearParticipants = async (req, res, next) => {
+  await Participant.collection.drop();
+  res.send("Sample");
+};
+
+exports.updateData = async (req, res, next) => {
+  let participant = await Participant.find({ id: req.body.id });
+  participant = participant[0];
+  console.log(participant._id);
+  if (participant.scan[req.body.round] == 1) {
+    res.status(400).json({ success: false });
+  } else {
+    participant.scan.set(req.body.round, 1);
+    console.log(participant);
+    participant.save(function(err) {
+      if (err) {
+        throw err;
+      } else {
+        console.log("Updated");
+        res.status(200).json({ success: true });
+      }
+    });
   }
 };
